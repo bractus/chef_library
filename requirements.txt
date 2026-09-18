@@ -1,0 +1,19 @@
+# --- core RAG ---
+faiss-cpu>=1.8.0
+numpy>=1.26,<3
+
+# --- agent (OpenRouter, OpenAI-compatible) ---
+openai>=1.40.0
+python-dotenv>=1.0.1
+
+# --- ui ---
+streamlit>=1.37.0
+
+# --- api (frontend/ talks to this) ---
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+sse-starlette>=2.1.0
+
+# --- utils ---
+tqdm>=4.66.0
+regex>=2024.5.15

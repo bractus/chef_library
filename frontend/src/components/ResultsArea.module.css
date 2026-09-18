@@ -1,0 +1,65 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.idle {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.ghost {
+  height: 92px;
+  border-radius: var(--radius-md);
+  border: 1px solid hsl(var(--glass-hue) 40% 75% / 0.14);
+  background: hsl(var(--glass-hue) 26% 45% / 0.09);
+  filter: blur(2px);
+}
+
+.idlePrompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 14px;
+  padding: 0 20px;
+}
+
+.errorPane {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  background: hsl(6 45% 35% / 0.12);
+  border: 1px solid hsl(6 55% 55% / 0.35);
+  color: hsl(6 60% 85%);
+}
+
+.errorPane svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--kind-rust);
+}
+
+.sourcesHeading {
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sourcesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}

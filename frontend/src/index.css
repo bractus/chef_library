@@ -1,0 +1,217 @@
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+
+:root {
+  color-scheme: dark;
+
+  /* -- ground: deep kitchen-at-service charcoal-slate -- */
+  --ground-0: #0d1015;
+  --ground-1: #12161c;
+  --ground-2: #1b232e;
+
+  /* -- glass: cool blue-gray, the world's material -- */
+  --glass-hue: 210;
+  --glass-tint: hsl(var(--glass-hue) 24% 78%);
+  --glass-fill-rest: hsl(var(--glass-hue) 26% 70% / 0.07);
+  --glass-fill-clear: hsl(var(--glass-hue) 26% 74% / 0.16);
+  --glass-fill-porthole: hsl(var(--glass-hue) 22% 76% / 0.1);
+  --glass-border: hsl(var(--glass-hue) 34% 86% / 0.14);
+  --glass-border-clear: hsl(var(--glass-hue) 40% 88% / 0.28);
+
+  /* -- one warm accent: a lamp behind the glass -- */
+  --copper: #dd944c;
+  --copper-dim: #b9793e;
+  --copper-ink: #2a1a0c;
+
+  /* -- strict per-kind color law (never overridden ad hoc); kept distinct
+     from --copper, which is reserved for the single lamp accent -- */
+  --kind-receita: #c76b4a;
+  --kind-tecnica: #6fa3d8;
+  --kind-texto: #9aa6ba;
+  --kind-rust: #c1614b;
+
+  /* -- text: tinted from the glass hue, never flat gray -- */
+  --text-primary: hsl(var(--glass-hue) 30% 95%);
+  --text-secondary: hsl(var(--glass-hue) 18% 72%);
+  --text-tertiary: hsl(var(--glass-hue) 14% 56%);
+
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 9px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(120% 100% at 18% 0%, var(--ground-2), var(--ground-1) 55%, var(--ground-0) 100%);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 15.5px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+}
+
+input, select {
+  font-family: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: hsl(28 70% 55% / 0.35);
+  color: var(--text-primary);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--glass-hue) 20% 60% / 0.25);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--glass-hue) 20% 65% / 0.4);
+  background-clip: padding-box;
+}
+
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.citation-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4em;
+  height: 1.4em;
+  padding: 0 0.3em;
+  margin: 0 0.1em;
+  border: 1px solid hsl(28 60% 60% / 0.4);
+  border-radius: 5px;
+  background: hsl(28 60% 55% / 0.14);
+  color: var(--copper);
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-0.1em);
+  transition: background 140ms var(--ease-out-expo), border-color 140ms var(--ease-out-expo);
+}
+
+.prose a {
+  color: var(--kind-tecnica);
+  text-decoration-line: underline;
+  text-decoration-color: hsl(210 55% 65% / 0.4);
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
+
+.traceable-sentence {
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 140ms var(--ease-out-expo);
+}
+
+.traceable-sentence:hover {
+  background: hsl(28 55% 55% / 0.1);
+}
+
+.citation-chip:hover,
+.citation-chip--traced,
+.citation-chip:focus-visible {
+  background: hsl(28 65% 55% / 0.28);
+  border-color: hsl(28 70% 65% / 0.7);
+  box-shadow: 0 0 14px -2px hsl(28 90% 60% / 0.65);
+}
+
+.md-heading {
+  margin: 0.9em 0 0.4em;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+.md-heading--1 {
+  font-size: 1.2em;
+}
+.md-heading--2 {
+  font-size: 1.05em;
+}
+.md-heading--3 {
+  font-size: 1em;
+}
+.md-heading:first-child {
+  margin-top: 0;
+}
+
+.md-rule {
+  border: none;
+  border-top: 1px solid var(--glass-border);
+  margin: 1em 0;
+}
+
+.md-blank {
+  height: 0.6em;
+}
+
+.md-line {
+  min-height: 1.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,137 @@
+.card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: hsl(var(--glass-hue) 22% 14% / 0.4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+  opacity: 0;
+  animation: fogIn 320ms var(--ease-out-expo) both;
+  transition: border-color 200ms var(--ease-out-expo);
+}
+
+.card--traced {
+  border-color: hsl(28 65% 60% / 0.6);
+  box-shadow: 0 0 0 1px hsl(28 65% 60% / 0.25), 0 12px 34px -18px hsl(28 60% 30% / 0.5);
+}
+
+.head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  min-width: 1.6em;
+}
+
+.titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: transform 200ms var(--ease-out-expo);
+}
+
+.chevron--open {
+  transform: rotate(90deg);
+}
+
+.meta {
+  padding: 0 14px 10px;
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.lowQuality {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--kind-rust);
+}
+
+.body {
+  position: relative;
+  padding: 0 14px 16px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  filter: blur(4px);
+  opacity: 0.5;
+  transition: filter 260ms var(--ease-out-expo), opacity 260ms var(--ease-out-expo);
+  max-height: 4.8em;
+  overflow: hidden;
+}
+
+.body--clear {
+  filter: blur(0);
+  opacity: 1;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.ingredients {
+  padding: 0 14px 12px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.ingredients b {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+@keyframes fogIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}

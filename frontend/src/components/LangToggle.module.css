@@ -1,0 +1,32 @@
+.toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--glass-fill-porthole);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  gap: 2px;
+}
+
+.option {
+  border: none;
+  background: none;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.03em;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background 160ms var(--ease-out-expo), color 160ms var(--ease-out-expo);
+}
+
+.option:hover {
+  color: var(--text-secondary);
+}
+
+.optionActive {
+  background: hsl(var(--glass-hue) 30% 78% / 0.18);
+  color: var(--text-primary);
+}

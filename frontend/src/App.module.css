@@ -1,0 +1,59 @@
+.page {
+  min-height: 100vh;
+  padding: 28px 24px 64px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 880px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wordmarkTitle {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.setupPane {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border-clear);
+  background: var(--glass-fill-clear);
+  backdrop-filter: blur(24px);
+  padding: 28px;
+  line-height: 1.7;
+}
+
+.setupPane pre {
+  background: hsl(var(--glass-hue) 30% 10% / 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  overflow-x: auto;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 18px 14px 48px;
+  }
+  .header {
+    flex-wrap: wrap;
+  }
+}
