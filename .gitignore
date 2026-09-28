@@ -1,3 +1,4 @@
+.specify/
 .venv/
 __pycache__/
 *.pyc
@@ -12,6 +13,7 @@ books_md/
 node_modules/
 frontend/dist/
 DESIGN.md
+specs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
