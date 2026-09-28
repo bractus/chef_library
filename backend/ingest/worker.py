@@ -49,17 +49,19 @@ class IngestWorker(threading.Thread):
         self.repo = repo
         self.holder = holder
         self._wake = threading.Event()
-        self._stop = threading.Event()
+        # nao "_stop": no Python 3.12 (imagem do Docker) isso sobrescreve
+        # Thread._stop(), que o join() chama
+        self._stop_event = threading.Event()
 
     def wake(self) -> None:
         self._wake.set()
 
     def stop(self) -> None:
-        self._stop.set()
+        self._stop_event.set()
         self._wake.set()
 
     def run(self) -> None:
-        while not self._stop.is_set():
+        while not self._stop_event.is_set():
             job = self.repo.claim_next()
             if job is None:
                 self._wake.wait(_IDLE_WAIT_S)

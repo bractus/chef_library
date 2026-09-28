@@ -116,23 +116,33 @@ class SearchFilters:
 
 
 class _FilterMatcher:
-    """Filtros ja normalizados (folding aplicado uma vez, nao por chunk)."""
+    """Filtros ja normalizados (folding aplicado uma vez, nao por chunk).
+    Os ingredientes sao casados pelo ChunkStore no texto de todos os trechos
+    (_word_docs); aqui ficam so os filtros sobre os campos do trecho."""
 
     def __init__(self, filters: SearchFilters):
         self.f = filters
         # "camarao, alho, limao" -> exige TODOS os termos (AND), nao so um
         terms = re.split(r'[,;]', filters.ingredient) if filters.ingredient else []
-        self.ingredients = [t for t in (fold(t).strip() for t in terms) if t]
+        self.ingredients = [t for t in (" ".join(fold(t).split()) for t in terms) if t]
         self.book = fold(filters.book) if filters.book else None
+        self._book_ok: dict[str, bool] = {}  # poucas centenas de livros, 100 mil trechos
 
-    def matches(self, chunk: "Chunk", folded_text: str) -> bool:
+    @property
+    def has_field_filters(self) -> bool:
+        f = self.f
+        return bool(f.kind or f.book or f.region or f.dish_type)
+
+    def matches(self, chunk: "Chunk") -> bool:
         f = self.f
         if f.kind and chunk.kind != f.kind:
             return False
-        if self.book and self.book not in fold(chunk.book):
-            return False
-        if self.ingredients and not all(t in folded_text for t in self.ingredients):
-            return False
+        if self.book:
+            ok = self._book_ok.get(chunk.book)
+            if ok is None:
+                ok = self._book_ok[chunk.book] = self.book in fold(chunk.book)
+            if not ok:
+                return False
         if f.region and chunk.region != f.region:
             return False
         if f.dish_type and f.dish_type not in chunk.dish_types:
@@ -153,6 +163,7 @@ class ChunkStore:
         self._blob: str | None = None
         self._blob_starts: list[int] = []
         self._term_cache: dict[str, dict[int, int] | None] = {}
+        self._word_cache: dict[str, frozenset[int]] = {}
 
     @classmethod
     def empty(cls, dim: int) -> "ChunkStore":
@@ -164,6 +175,7 @@ class ChunkStore:
             self.chunks.extend(chunks)
             self._folded.extend(fold(f"{c.title}\n{c.text}") for c in chunks)
             self._term_cache.clear()
+            self._word_cache.clear()
 
     def truncate(self, n: int) -> None:
         """Desfaz um append que nao chegou a ser persistido."""
@@ -175,6 +187,7 @@ class ChunkStore:
             del self.chunks[n:]
             del self._folded[n:]
             self._term_cache.clear()
+            self._word_cache.clear()
 
     # ---------- persistencia ----------
     @classmethod
@@ -217,39 +230,67 @@ class ChunkStore:
         query: str,
         k: int = 8,
         filters: SearchFilters | None = None,
-        oversample: int = 80,
     ) -> list[Hit]:
-        """Busca semantica, com filtros opcionais aplicados sobre o candidato.
+        """Busca hibrida restrita aos trechos que passam nos filtros.
 
-        `oversample` amplia a busca antes de filtrar, para que os filtros nao
-        devolvam menos resultados do que o pedido.
+        Os filtros sao aplicados ANTES do ranking, sobre o acervo inteiro.
+        Filtrar so os vizinhos mais proximos da pergunta perdia quase tudo:
+        "receita" + ingredientes pera e presunto iberico nao achava a receita
+        do livro, que nao estava entre os 640 trechos (de 100 mil) mais
+        parecidos com "receita". O indice e plano, entao a varredura ja era
+        do acervo inteiro; o filtro so escolhe quais vetores entram nela.
         """
         if self.index.ntotal == 0:
             return []
         filters = filters or SearchFilters()
-        qv = embed_queries([query])  # chamada de rede: fora do lock
-
         matcher = _FilterMatcher(filters)
+        # os ingredientes do filtro tambem dizem o que se procura: fora do
+        # embedding, os trechos filtrados sairiam ordenados so por "receita"
+        text = f"{query} {re.sub(r'[,;]', ' ', filters.ingredient)}" if filters.ingredient else query
+        qv = embed_queries([text])  # chamada de rede: fora do lock
+
         hits: list[Hit] = []
         with self.lock:
-            rare = self._rare_terms(query)
-            want = k * oversample if filters.active else k
-            if rare:
-                want = max(want, _FUSION_POOL)
-            scores, idxs = self.index.search(qv, min(want, self.index.ntotal))
-            semantic = [(int(i), float(s)) for s, i in zip(scores[0], idxs[0]) if i >= 0]
+            allowed = self._allowed(matcher) if filters.active else None
+            if allowed is not None and not allowed:
+                return []
+            rare = self._rare_terms(text)
+            if allowed is not None:
+                rare = [(idf, docs) for idf, docs in
+                        ((idf, {i: tf for i, tf in docs.items() if i in allowed}) for idf, docs in rare)
+                        if docs]
+            semantic = self._nearest(qv, max(k, _FUSION_POOL) if rare else k, allowed)
             ranked = self._fuse(qv[0], semantic, rare) if rare else semantic
-            for i, score in ranked:
+            for i, score in ranked[:k]:
                 c = self.chunks[i]
-                if not matcher.matches(c, self._folded[i]):
-                    continue
                 hits.append(Hit(
                     score, c.id, c.book, c.title, c.kind, c.lang, c.text,
                     c.ingredients, c.region, c.dish_types, c.tags,
                 ))
-                if len(hits) >= k:
-                    break
         return hits
+
+    def _allowed(self, matcher: _FilterMatcher) -> set[int] | frozenset[int]:
+        """Indices de todos os trechos que passam nos filtros."""
+        ids: Iterable[int] = range(len(self.chunks))
+        if matcher.ingredients:
+            ids = frozenset.intersection(*(self._word_docs(t) for t in matcher.ingredients))
+            if not matcher.has_field_filters:
+                return ids
+        return {i for i in ids if matcher.matches(self.chunks[i])}
+
+    def _nearest(self, qv: np.ndarray, n: int,
+                 allowed: set[int] | frozenset[int] | None) -> list[tuple[int, float]]:
+        """Os `n` trechos mais proximos por cosseno, so entre `allowed` se dado.
+        O seletor faz o FAISS pular os vetores fora do filtro, sem copia-los."""
+        if allowed is None:
+            scores, idxs = self.index.search(qv, min(n, self.index.ntotal))
+        else:
+            import faiss
+
+            ids = np.fromiter(allowed, dtype="int64", count=len(allowed))
+            sel = faiss.IDSelectorBatch(len(ids), faiss.swig_ptr(ids))
+            scores, idxs = self.index.search(qv, min(n, len(ids)), params=faiss.SearchParameters(sel=sel))
+        return [(int(i), float(s)) for s, i in zip(scores[0], idxs[0]) if i >= 0]
 
     def _text_blob(self) -> tuple[str, list[int]]:
         """Todos os textos numa string so, para contar/achar termos em C
@@ -262,6 +303,25 @@ class ChunkStore:
                 pos += len(f) + 1
             self._blob, self._blob_starts = "\x00".join(self._folded), starts
         return self._blob, self._blob_starts
+
+    def _word_docs(self, term: str) -> frozenset[int]:
+        """Trechos com uma palavra que COMECA por `term` (ja em folding): "pera"
+        casa "peras", mas nao "temperatura" nem "espera". Termo de varias
+        palavras aceita qualquer espaco ou quebra de linha entre elas."""
+        cached = self._word_cache.get(term)
+        if cached is not None:
+            return cached
+        blob, starts = self._text_blob()
+        words = term.split()
+        whole = re.compile(r"\s+".join(map(re.escape, words)))
+        docs: set[int] = set()
+        pos = blob.find(words[0])
+        while pos != -1:
+            if (pos == 0 or not blob[pos - 1].isalnum()) and whole.match(blob, pos):
+                docs.add(bisect.bisect_right(starts, pos) - 1)
+            pos = blob.find(words[0], pos + 1)
+        self._word_cache[term] = found = frozenset(docs)
+        return found
 
     def _term_hits(self, term: str) -> dict[int, int] | None:
         """{trecho: ocorrencias} de um termo, ou None se ele for comum demais.

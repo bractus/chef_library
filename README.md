@@ -163,7 +163,10 @@ flowchart LR
    excerpts (such as "entremet" or "tempura") also get a lexical ranking,
    merged with the semantic one by reciprocal rank fusion, so specific terms
    aren't drowned out by generic ones. Filters (kind, ingredient, book,
-   region, dish type) apply to an oversampled candidate pool
+   region, dish type) are applied to the whole collection before ranking, so
+   a matching excerpt is found even when the question itself is generic.
+   Filter ingredients also join the query, and match at the start of a word
+   ("pera" finds "peras" but not "temperatura")
    ([search/store.py](backend/search/store.py)).
 3. **Answer.** The excerpts, conversation history and system prompt
    ([prompts/chef_system.md](backend/prompts/chef_system.md)) go to the first

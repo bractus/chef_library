@@ -1,13 +1,51 @@
-from backend.search.store import Chunk, ChunkStore
+from backend.search.store import Chunk, ChunkStore, SearchFilters
 from conftest import EMBED_DIM, fake_vectors
 
 
-def _store(texts: list[str]) -> ChunkStore:
+def _store(texts: list[str], books: list[str] | None = None) -> ChunkStore:
     store = ChunkStore.empty(EMBED_DIM)
-    chunks = [Chunk(id=f"b::{i}", book=f"Livro {i}", title="", kind="receita", lang="pt",
-                    text=t, ingredients=[], n_chars=len(t)) for i, t in enumerate(texts)]
+    books = books or [f"Livro {i}" for i in range(len(texts))]
+    chunks = [Chunk(id=f"b::{i}", book=b, title="", kind="receita", lang="pt",
+                    text=t, ingredients=[], n_chars=len(t)) for i, (t, b) in enumerate(zip(texts, books))]
     store.append(fake_vectors(texts), chunks)
     return store
+
+
+def test_filter_finds_match_outside_nearest_neighbours(fake_embed):
+    # 1000 trechos quase identicos a "receita" ocupam os vizinhos mais proximos;
+    # o unico com pera e presunto iberico precisa aparecer mesmo assim
+    generic = ["receita"] * 1000
+    target = "Peras e presunto ibérico com molho de salsinha, azeite de oliva e alho. 4 peras maduras"
+    store = _store(generic + [target])
+    hits = store.search("receita", k=8, filters=SearchFilters(ingredient="pera,presunto ibérico"))
+    assert [h.text for h in hits] == [target]
+
+
+def test_ingredient_matches_word_start_only(fake_embed):
+    texts = [
+        "asse a 180 graus, controlando a temperatura do forno",
+        "espere a massa descansar",
+        "peras cozidas no vinho tinto",
+        "presunto\nibérico em lâminas finas",
+    ]
+    store = _store(texts)
+    pera = store.search("sobremesa", k=8, filters=SearchFilters(ingredient="pera"))
+    assert [h.text for h in pera] == [texts[2]]
+    presunto = store.search("entrada", k=8, filters=SearchFilters(ingredient="presunto ibérico"))
+    assert [h.text for h in presunto] == [texts[3]]
+
+
+def test_book_filter_ranks_only_that_book(fake_embed):
+    texts = [f"receita de peixe numero {i}" for i in range(300)] + ["receita de cordeiro no fogo"]
+    books = ["Outro"] * 300 + ["Sete Fogos"]
+    store = _store(texts, books)
+    hits = store.search("receita de peixe", k=5, filters=SearchFilters(book="sete fogos"))
+    assert [h.book for h in hits] == ["Sete Fogos"]
+
+
+def test_filter_without_matches_returns_nothing(fake_embed):
+    store = _store(["receita de pao", "receita de bolo"])
+    assert store.search("receita", k=5, filters=SearchFilters(ingredient="trufa")) == []
 
 
 def test_rare_term_is_not_drowned_by_generic_words(fake_embed):
