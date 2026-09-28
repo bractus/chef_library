@@ -1,59 +1,116 @@
-.page {
-  min-height: 100vh;
-  padding: 28px 24px 64px;
-  display: flex;
-  justify-content: center;
+/* casca de aplicativo: cabeçalho fixo em cima, o resto é da conversa */
+.app {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
-.container {
-  width: 100%;
-  max-width: 880px;
-}
-
-.header {
+.topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 22px;
+  gap: 22px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--glass-border);
+  background: hsl(214 24% 9% / 0.35);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
-.headerRight {
+.brand {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
-.wordmarkTitle {
+.wordmark {
   font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
-.setupPane {
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border-clear);
-  background: var(--glass-fill-clear);
-  backdrop-filter: blur(24px);
-  padding: 28px;
-  line-height: 1.7;
-}
-
-.setupPane pre {
-  background: hsl(var(--glass-hue) 30% 10% / 0.6);
+.tabs {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: var(--glass-fill-porthole);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  overflow-x: auto;
+}
+
+.tab {
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  color: var(--text-tertiary);
+  transition: background 160ms var(--ease-out-expo), color 160ms var(--ease-out-expo);
+}
+
+.tab:hover {
+  color: var(--text-secondary);
+}
+
+.tabActive {
+  background: hsl(var(--glass-hue) 30% 78% / 0.18);
+  color: var(--text-primary);
+}
+
+.topRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.main {
+  position: relative;
+  min-height: 0;
+}
+
+.pane {
+  height: 100%;
+  min-height: 0;
+}
+
+.pane[hidden] {
+  display: none;
+}
+
+.ingestPane {
+  overflow-y: auto;
+}
+
+.ingestInner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 24px 64px;
 }
 
 @media (max-width: 640px) {
-  .page {
-    padding: 18px 14px 48px;
-  }
-  .header {
+  .topbar {
     flex-wrap: wrap;
+    gap: 10px 12px;
+    padding: 10px 14px;
+  }
+  .brand {
+    gap: 10px;
+  }
+  .wordmark {
+    font-size: 14px;
+  }
+  .tabs {
+    order: 3;
+    width: 100%;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+  }
+  .ingestInner {
+    padding: 18px 14px 48px;
   }
 }

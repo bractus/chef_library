@@ -1,0 +1,181 @@
+.chat {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+}
+
+.thread {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* o histórico some suavemente atrás da barra de perguntas, sem pintar faixa */
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+}
+
+/* coluna de leitura: medida de prosa, centralizada no espaço do chat */
+.inner {
+  max-width: 780px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 32px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.turn {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: arrive 300ms var(--ease-out-expo) both;
+}
+
+.userRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: min(78%, 60ch);
+  padding: 11px 16px;
+  border-radius: 18px 18px 6px 18px;
+  background: var(--glass-fill-clear);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* barra de perguntas presa embaixo; o histórico rola por trás dela */
+.dock {
+  position: relative;
+  padding: 0 28px 22px;
+}
+
+.dockInner {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ---------- estado vazio: ensina a usar ---------- */
+.empty {
+  margin: auto 0;
+  padding: 40px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: arrive 420ms var(--ease-out-expo) both;
+}
+
+.emptyTitle {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+.emptyBody {
+  max-width: 58ch;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.emptyBody a {
+  color: var(--text-primary);
+  text-underline-offset: 3px;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.example {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill-rest);
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 160ms var(--ease-out-expo), border-color 160ms var(--ease-out-expo),
+    background 160ms var(--ease-out-expo);
+}
+
+.example:hover {
+  color: var(--text-primary);
+  border-color: var(--glass-border-clear);
+  background: var(--glass-fill-clear);
+}
+
+.code {
+  align-self: flex-start;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: hsl(var(--glass-hue) 30% 10% / 0.6);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+
+@media (max-width: 1000px) {
+  .chat {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .inner {
+    padding: 22px 16px 20px;
+    gap: 34px;
+  }
+  .dock {
+    padding: 0 12px 12px;
+  }
+  .bubble {
+    max-width: 88%;
+  }
+  .emptyTitle {
+    font-size: 1.35rem;
+  }
+}
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

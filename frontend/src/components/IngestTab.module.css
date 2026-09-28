@@ -1,0 +1,138 @@
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.notice,
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.notice svg,
+.error svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* mesmo registro azul do aviso de "fora do acervo": informacao, nao erro */
+.notice {
+  background: hsl(210 55% 55% / 0.1);
+  border: 1px solid hsl(210 55% 65% / 0.3);
+  color: hsl(210 60% 88%);
+}
+
+.notice svg {
+  color: var(--kind-tecnica);
+}
+
+.error {
+  background: hsl(6 45% 35% / 0.12);
+  border: 1px solid hsl(6 55% 55% / 0.35);
+  color: hsl(6 60% 85%);
+}
+
+.error svg {
+  color: var(--kind-rust);
+}
+
+/* envio em andamento: e o que esta em uso, entao fica nitido */
+.uploadPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--glass-fill-clear);
+  border: 1px solid var(--glass-border-clear);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.uploadHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13.5px;
+  min-width: 0;
+}
+
+.uploadName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.uploadPct {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+
+.track {
+  height: 4px;
+  border-radius: 999px;
+  background: hsl(var(--glass-hue) 30% 70% / 0.12);
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--glass-tint);
+  transition: width 300ms var(--ease-out-expo);
+}
+
+.cancelButton {
+  align-self: flex-start;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border-clear);
+  background: hsl(var(--glass-hue) 30% 78% / 0.1);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background: hsl(var(--glass-hue) 30% 78% / 0.2);
+}
+
+.info {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+
+.rejected {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.rejected li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid hsl(6 55% 55% / 0.25);
+  background: hsl(6 45% 35% / 0.08);
+}
+
+.rejectedName {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}

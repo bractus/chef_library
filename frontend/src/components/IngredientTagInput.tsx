@@ -1,5 +1,5 @@
 import { useState, type KeyboardEvent } from 'react';
-import { DropletIcon } from './Icons';
+import { CloseIcon, DropletIcon } from './Icons';
 import styles from './IngredientTagInput.module.css';
 
 interface Props {
@@ -43,7 +43,7 @@ export function IngredientTagInput({ value, onChange, placeholder, ariaLabel, re
             onClick={() => onChange(value.filter((v) => v !== ing))}
             aria-label={removeLabelTemplate.replace('{ing}', ing)}
           >
-            ×
+            <CloseIcon size={10} />
           </button>
         </span>
       ))}

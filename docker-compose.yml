@@ -9,8 +9,24 @@ services:
       # indice FAISS ja construido (ver README) — montado, nao copiado pra
       # imagem, pra reaproveitar entre builds/deploys sem reprocessar tudo.
       - ./data:/app/data
+      # originais dos livros (inclusive os enviados pela aba "Adicionar livros")
+      # — fonte de um rebuild pelo CLI; ver "Rebuilding the index" no README.
+      - ./books:/app/books
     env_file:
       - .env
+    environment:
+      # fila e historico da aba "Adicionar livros"; sobrescreve um DATABASE_URL
+      # de desenvolvimento local (localhost) que esteja no .env
+      DATABASE_URL: postgresql://${POSTGRES_USER:-chef}:${POSTGRES_PASSWORD:-chef}@db:5432/${POSTGRES_DB:-chef_library}
+    depends_on:
+      db:
+        condition: service_healthy
+    extra_hosts:
+      # permite o container falar com um Ollama rodando nativo no host (Mac)
+      # via host.docker.internal — usado quando nenhuma key de API paga
+      # esta configurada (ver OLLAMA_BASE_URL no .env). Ja funciona por
+      # padrao no Docker Desktop; em Colima/Linux precisa deste mapeamento.
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
   frontend:
@@ -22,3 +38,26 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-chef}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chef}
+      POSTGRES_DB: ${POSTGRES_DB:-chef_library}
+    volumes:
+      # a partir do Postgres 18 o volume vai em /var/lib/postgresql (os dados
+      # ficam em /var/lib/postgresql/18/docker), nao mais em .../data
+      - pgdata:/var/lib/postgresql
+    ports:
+      # so no localhost: para os testes (pytest) e para o backend fora do Docker
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  pgdata:

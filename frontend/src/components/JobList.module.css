@@ -1,0 +1,241 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.heading {
+  font-size: 12.5px;
+  font-weight: 400;
+  font-family: var(--font-mono);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* historico: vidro em repouso; o que esta em andamento fica nitido */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: hsl(210 22% 14% / 0.4);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.rowActive {
+  background: var(--glass-fill-clear);
+  border-color: var(--glass-border-clear);
+}
+
+.rowHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.filename {
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  background: hsl(var(--glass-hue) 24% 16% / 0.5);
+}
+
+.badge_added {
+  color: var(--text-primary);
+  border-color: var(--glass-border-clear);
+  background: hsl(var(--glass-hue) 30% 78% / 0.14);
+}
+
+.badge_duplicate,
+.badge_discarded,
+.badge_cancelled {
+  color: var(--text-tertiary);
+}
+
+.badge_no_text {
+  color: var(--kind-tecnica);
+  border-color: hsl(210 55% 65% / 0.35);
+  background: hsl(210 55% 55% / 0.1);
+}
+
+.badge_error {
+  color: hsl(6 60% 80%);
+  border-color: hsl(6 55% 55% / 0.4);
+  background: hsl(6 45% 35% / 0.18);
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+}
+
+.progressBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.stage {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.track {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: hsl(var(--glass-hue) 30% 70% / 0.12);
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--glass-tint);
+  transition: width 400ms var(--ease-out-expo);
+}
+
+.barIndeterminate {
+  width: 30%;
+  animation: slide 1.4s ease-in-out infinite;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bookTitle {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.resultMeta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.reason {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.note {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: hsl(210 55% 55% / 0.08);
+  border: 1px solid hsl(210 55% 65% / 0.28);
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.actionButton {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border-clear);
+  background: hsl(var(--glass-hue) 30% 78% / 0.1);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 160ms var(--ease-out-expo), border-color 160ms var(--ease-out-expo);
+}
+
+.actionButton:hover {
+  background: hsl(var(--glass-hue) 30% 78% / 0.2);
+}
+
+.linkButton {
+  border: none;
+  background: none;
+  padding: 7px 6px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+
+.linkButton:hover {
+  color: var(--text-secondary);
+}
+
+.empty {
+  margin-top: 10px;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+.loadMore {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: none;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.loadMore:hover {
+  color: var(--text-primary);
+  border-color: var(--glass-border-clear);
+}

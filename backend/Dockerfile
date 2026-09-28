@@ -3,8 +3,12 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # libgomp1: dependencia de runtime do faiss-cpu (OpenMP) em imagens slim.
+# tesseract-ocr + idiomas: OCR opcional de PDFs escaneados na aba "Adicionar
+# livros" — os mesmos cinco idiomas que o pipeline detecta (pt/en/fr/es/it).
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libgomp1 \
+        tesseract-ocr tesseract-ocr-por tesseract-ocr-eng tesseract-ocr-fra \
+        tesseract-ocr-spa tesseract-ocr-ita \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

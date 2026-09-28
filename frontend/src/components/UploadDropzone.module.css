@@ -1,0 +1,113 @@
+/* a area em uso da aba: o painel nitido (porthole), nunca embacado */
+.zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 30px 22px 22px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-fill-porthole);
+  border: 1px dashed var(--glass-border-clear);
+  backdrop-filter: blur(28px) saturate(1.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.3);
+  box-shadow:
+    0 1px 0 hsl(var(--glass-hue) 50% 95% / 0.12) inset,
+    0 24px 60px -24px hsl(220 60% 4% / 0.6);
+  transition: border-color 180ms var(--ease-out-expo), background 180ms var(--ease-out-expo);
+}
+
+.zoneDragging {
+  border-color: hsl(var(--glass-hue) 45% 80% / 0.6);
+  background: var(--glass-fill-clear);
+}
+
+.zoneInactive {
+  opacity: 0.6;
+}
+
+.icon {
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 1.05em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* acao secundaria: vidro, nunca cobre (o cobre e so da acao principal) */
+.folderButton {
+  padding: 11px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border-clear);
+  background: hsl(var(--glass-hue) 30% 78% / 0.1);
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 160ms var(--ease-out-expo);
+}
+
+.folderButton:hover:not(:disabled) {
+  background: hsl(var(--glass-hue) 30% 78% / 0.2);
+}
+
+.folderButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.chooseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 22px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--copper), var(--copper-dim));
+  color: var(--copper-ink);
+  font-weight: 600;
+  font-size: 14.5px;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px hsl(30 70% 70% / 0.35), 0 6px 20px -4px hsl(28 80% 55% / 0.55), 0 0 32px -6px hsl(28 90% 60% / 0.5);
+  transition: transform 140ms var(--ease-out-expo), filter 140ms var(--ease-out-expo);
+}
+
+.chooseButton:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.chooseButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.chooseButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.formats {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  max-width: 60ch;
+}

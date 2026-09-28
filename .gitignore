@@ -231,3 +231,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# livros de referencia (PDFs/markdown) — nao redistribuir
+b/
+livros/

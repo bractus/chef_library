@@ -3,7 +3,9 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 5px;
-  min-width: 220px;
+  /* absorve a sobra da linha, para os selects nao esticarem sozinhos */
+  flex: 1 1 180px;
+  min-width: 0;
   max-width: 100%;
   padding: 6px 10px 6px 30px;
   position: relative;
@@ -14,7 +16,8 @@
 }
 
 .wrap:focus-within {
-  border-color: hsl(var(--glass-hue) 45% 70% / 0.5);
+  border-color: hsl(var(--glass-hue) 45% 75% / 0.6);
+  box-shadow: 0 0 0 1px hsl(var(--glass-hue) 45% 75% / 0.25);
 }
 
 .icon {
@@ -66,6 +69,10 @@
   font-size: 13px;
   color: var(--text-primary);
   padding: 3px 0;
+}
+
+.input:focus {
+  outline: none; /* o foco aparece na borda do campo inteiro (.wrap:focus-within) */
 }
 
 .input::placeholder {
